@@ -12,10 +12,14 @@ width, height = 900, 600
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Fitness App')
 
+cam1 = 1
+cam2 = 2
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GRAY = (200, 200, 200)
 BLUE = (0, 0, 255)
+LIGHT_BLUE = (173, 216, 230)
 
 font = pygame.font.Font(None, 36)
 
@@ -25,11 +29,14 @@ def draw_text(text, font, color, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-def draw_input_box(surface, x, y, w, h, text=''):
-    pygame.draw.rect(surface, WHITE, (x, y, w, h))
+def draw_input_box(surface, x, y, w, h, text='', color=WHITE):
+    pygame.draw.rect(surface, color, (x, y, w, h))
     pygame.draw.rect(surface, BLACK, (x, y, w, h), 2)
     text_surface = font.render(text, True, BLACK)
     surface.blit(text_surface, (x + 5, y + 5))
+
+def is_mouse_over(mx, my, x, y, w, h):
+    return x <= mx <= x + w and y <= my <= y + h
 
 def main():
     global screen
@@ -47,23 +54,33 @@ def main():
         screen.fill(GRAY)
         draw_text('Select Options', font, BLACK, screen, 20, 20)
 
+        mx, my = pygame.mouse.get_pos()
+
+        nbCameras_color = LIGHT_BLUE if is_mouse_over(mx, my, 300, 100, 100, 40) else WHITE
+        exoType_color = LIGHT_BLUE if is_mouse_over(mx, my, 500, 200, 100, 40) else WHITE
+        repetitions_color = LIGHT_BLUE if is_mouse_over(mx, my, 300, 300, 100, 40) else WHITE
+        sets_color = LIGHT_BLUE if is_mouse_over(mx, my, 300, 400, 100, 40) else WHITE
+        calibrate_cameras_color = LIGHT_BLUE if is_mouse_over(mx, my, 750, 500, 100, 40) else WHITE
+        start_button_color = LIGHT_BLUE if is_mouse_over(mx, my, 50, 550, 200, 40) else BLUE
+
+
         draw_text('Number of Cameras:', font, BLACK, screen, 50, 100)
-        draw_input_box(screen, 300, 100, 100, 40, nbCameras)
+        draw_input_box(screen, 300, 100, 100, 40, nbCameras, nbCameras_color)
 
         draw_text('Exercise Type (1 for Curl, 2 for Squat):', font, BLACK, screen, 50, 200)
-        draw_input_box(screen, 500, 200, 100, 40, str(exoType) if exoType is not None else '')
+        draw_input_box(screen, 500, 200, 100, 40, str(exoType) if exoType is not None else '', exoType_color)
 
         draw_text('Number of Reps:', font, BLACK, screen, 50, 300)
-        draw_input_box(screen, 300, 300, 100, 40, repetitions)
+        draw_input_box(screen, 300, 300, 100, 40, repetitions, repetitions_color)
 
         draw_text('Number of Sets:', font, BLACK, screen, 50, 400)
-        draw_input_box(screen, 300, 400, 100, 40, sets)
+        draw_input_box(screen, 300, 400, 100, 40, sets, sets_color)
 
         if nbCameras == '2':
             draw_text('Do you want to calibrate the cameras? (1 for yes, 2 for no):', font, BLACK, screen, 50, 500)
-            draw_input_box(screen, 750, 500, 100, 40, calibrate_cameras)
+            draw_input_box(screen, 750, 500, 100, 40, calibrate_cameras, calibrate_cameras_color)
 
-        pygame.draw.rect(screen, BLUE, (50, 550, 200, 40))
+        pygame.draw.rect(screen, start_button_color, (50, 550, 200, 40))
         draw_text('Start', font, WHITE, screen, 100, 560)
 
         for event in pygame.event.get():

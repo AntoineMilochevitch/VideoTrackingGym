@@ -1,4 +1,5 @@
 import numpy as np
+from playSound import play_sound
 
 def calculate_angle_3d(a, b, c):
     ba = a - b
@@ -66,6 +67,7 @@ def main(points_3d):
         print("Back is straight")
     else:
         print(f"Back angle is {back_angle:.2f} degrees, not straight")
+        play_sound("straighten your back")
 
 
     return squat_detected

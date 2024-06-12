@@ -5,6 +5,7 @@ import time
 from utility import DLT, get_projection_matrix
 import curlDetection
 import squatDetection
+from playSound import play_sound
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -147,12 +148,20 @@ def run_mp(input_stream1, input_stream2, P0, P1, nbRep, nbSet, exoType):
                 start_right_position = "Down"
         
         elif exoType == 2:
-            squatDetection.main(frame_p3ds)
+            squat = squatDetection.main(frame_p3ds)
+            if squat == "Down" and start_left_position == "Up":
+                rep_count += 1
+                start_left_position = "Down"
+            elif squat == "Up" and start_left_position == "Down":
+                start_left_position = "Up"
+            
 
-        if rep_count == nbRep*2:
+        if rep_count == nbRep:
             set_count -= 1
             rep_count = 0
             print(f"Set {nbSet - set_count} completed")
+        
+
         
         # End time of frame processing
         end_time = time.time()
@@ -169,7 +178,6 @@ def run_mp(input_stream1, input_stream2, P0, P1, nbRep, nbSet, exoType):
 
         k = cv.waitKey(1)
         if k & 0xFF == 27: break #27 is ESC key.
-
 
     cv.destroyAllWindows()
     for cap in caps:

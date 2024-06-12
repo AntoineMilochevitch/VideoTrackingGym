@@ -17,6 +17,7 @@ def calculate_angle(a, b, c):
 def main(repetions, sets) :
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
+    mp_drawing_styles = mp.solutions.drawing_styles
 
     leftcounter = 0
     leftstage = None
@@ -27,10 +28,6 @@ def main(repetions, sets) :
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-    mpHands = mp.solutions.hands
-    hands = mpHands.Hands()
-    mpDraw = mp.solutions.drawing_utils
 
     pTime = 0
     cTime = 0
@@ -105,8 +102,8 @@ def main(repetions, sets) :
                 cv2.putText(image, str(rightcounter), (430, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (255, 255, 255), 2, cv2.LINE_AA)
                 cv2.putText(image, rightstage, (550, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
                 
-                mp_drawing.draw_landmarks(image, results_pose.pose_landmarks, mp_pose.POSE_CONNECTIONS)
-
+                mp_drawing.draw_landmarks(image, results_pose.pose_landmarks, mp_pose.POSE_CONNECTIONS, 
+                    landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
             except:
                 pass
         
@@ -124,8 +121,8 @@ def main(repetions, sets) :
 
             cv2.imshow("Raw webcam feed", image)
 
-            if cv2.waitKey(10) & 0xFF == ord('q'):
-                break
+            k = cv2.waitKey(1)
+            if k & 0xFF == 27: break #27 is ESC key.
 
             end_time = time.time()
             elapsed_time = end_time - start_time
