@@ -54,13 +54,13 @@ You have the possibility, if you use 2 cameras, to calbirate them.
 
 2. **Calibration of each cameras**
     - For both cameras, you must first take turns presenting the board (camera 1 then 2). For each camera, 10 frames will be captured every 100ms. To start capturing, press the space bar.
-    ![Starting the frame collection](image\Calib1.png)
+    ![Starting the frame collection](image/Calib1.png)
     - After capturing the frames, you must validate or not the images (by pressing space to validate or S to skip).
-    ![Validation of the frames](image\Calib2.png)
+    ![Validation of the frames](image/Calib2.png)
     - Then, you need to calibrate both cameras at the same time. Make sure they are in their final positions and that the board is clearly visible to both of them. Press the space key to begin.
-    ![Calibration both camera](image\Calib3.png)
+    ![Calibration both camera](image/Calib3.png)
     - Finally, as before, validate or not the images by pressing space or S (note that this validates the image pair)
-    ![Calibration both camera](image\Calib4.png)
+    ![Calibration both camera](image/Calib4.png)
 
 ### Video Tracking
 
