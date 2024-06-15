@@ -1,0 +1,28 @@
+{
+    "global": {
+        "font_path": "fonts/CostaRica.otf",
+        "font_size": 40
+    },
+    "text_entry": {
+        "colours": {
+            "normal_bg": "#67a436",
+            "normal_text": "#F0F0F0"
+        }
+    },
+    "drop_down_menu": {
+        "colours": {
+            "normal_bg": "#67a436",
+            "normal_text": "#F0F0F0",
+            "hovered_text": "##DCDFDA",
+            "hovered_bg": "#67c836"
+        }
+    },
+    "button": {
+        "colours": {
+            "normal_bg": "#67a436",
+            "normal_text": "#F0F0F0",
+            "hovered_text": "##DCDFDA",
+            "hovered_bg": "#67c836"  
+        }
+    }
+}

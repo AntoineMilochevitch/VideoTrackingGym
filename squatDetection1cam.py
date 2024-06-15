@@ -20,6 +20,7 @@ def main(repetitions, sets):
     # Initialize MediaPipe modules
     mp_pose = mp.solutions.pose
     mp_drawing = mp.solutions.drawing_utils
+    mp_drawing_styles = mp.solutions.drawing_styles
 
     cap = cv2.VideoCapture(0)
 
@@ -67,14 +68,15 @@ def main(repetitions, sets):
                 pass
 
             # Render squat counter and detections on the image
-            cv2.rectangle(image, (0,0), (225,73), (245,117,16), -1)
+            cv2.rectangle(image, (0, 0), (215, 63), (102, 206, 183), -1)
             cv2.putText(image, 'REPS', (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv2.LINE_AA)
             cv2.putText(image, str(counter), (10,60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 2, cv2.LINE_AA)
             cv2.putText(image, 'STAGE', (65,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,0), 1, cv2.LINE_AA)
             cv2.putText(image, stage, (60,60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 2, cv2.LINE_AA)
 
             # Draw the landmarks and connections
-            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS, mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2))
+            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS, 
+                    landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
 
             # Display the image
             cv2.imshow('Mediapipe Feed', image)

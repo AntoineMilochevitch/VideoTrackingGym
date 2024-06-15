@@ -1,9 +1,11 @@
 import pygame
+import pygame_gui
 import sys
 import videoDetection
 import calib
 import squatDetection1cam
 import curlDetection1cam
+import json
 
 pygame.init()
 
@@ -12,134 +14,111 @@ width, height = 900, 600
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Fitness App')
 
-cam1 = 1
-cam2 = 2
+# Colors
+DARK_GREEN = (75, 89, 67)
+LIGHT_GREEN = (143, 180, 58)
+LIGHT_GRAY = (220, 223, 218)
 
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
-BLUE = (0, 0, 255)
-LIGHT_BLUE = (173, 216, 230)
+with open('theme.json', 'r') as f:
+    theme = json.load(f)
 
-font = pygame.font.Font(None, 36)
+font_path = theme['global']['font_path']
+font_size = theme['global']['font_size']
 
+
+# Load the theme
+manager = pygame_gui.UIManager((width, height), 'theme.json')
+
+# Set up UI elements
+nbCameras_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((400, 100), (40, 40)), manager=manager, object_id='#nbCameras')
+exoType_dropdown = pygame_gui.elements.UIDropDownMenu(
+    options_list=['Curl', 'Squat'],
+    starting_option='Curl',
+    relative_rect=pygame.Rect((400, 200), (100, 40)),
+    manager=manager,
+)
+repetitions_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((400, 300), (40, 40)), manager=manager, object_id='#repetitions')
+sets_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((400, 400), (40, 40)), manager=manager, object_id='#sets')
+calibrate_yes_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((400, 500), (50, 40)), text='Yes', manager=manager)
+calibrate_no_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((450, 500), (50, 40)), text='No', manager=manager)
+calibrate_yes_button.hide()
+calibrate_no_button.hide()
+start_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 550), (150, 40)), text='Start', manager=manager)
+
+# Labels
+font = pygame.font.Font(font_path, font_size)
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-def draw_input_box(surface, x, y, w, h, text='', color=WHITE):
-    pygame.draw.rect(surface, color, (x, y, w, h))
-    pygame.draw.rect(surface, BLACK, (x, y, w, h), 2)
-    text_surface = font.render(text, True, BLACK)
-    surface.blit(text_surface, (x + 5, y + 5))
-
-def is_mouse_over(mx, my, x, y, w, h):
-    return x <= mx <= x + w and y <= my <= y + h
-
 def main():
     global screen
 
-    nbCameras = ''
-    exoType = None
-    repetitions = ''
-    sets = ''
-    calibrate_cameras = ''
+    calibrate_cameras = False
 
-    input_active = None
     running = True
+    clock = pygame.time.Clock()
 
     while running:
-        screen.fill(GRAY)
-        draw_text('Select Options', font, BLACK, screen, 20, 20)
-
-        mx, my = pygame.mouse.get_pos()
-
-        nbCameras_color = LIGHT_BLUE if is_mouse_over(mx, my, 300, 100, 100, 40) else WHITE
-        exoType_color = LIGHT_BLUE if is_mouse_over(mx, my, 500, 200, 100, 40) else WHITE
-        repetitions_color = LIGHT_BLUE if is_mouse_over(mx, my, 300, 300, 100, 40) else WHITE
-        sets_color = LIGHT_BLUE if is_mouse_over(mx, my, 300, 400, 100, 40) else WHITE
-        calibrate_cameras_color = LIGHT_BLUE if is_mouse_over(mx, my, 750, 500, 100, 40) else WHITE
-        start_button_color = LIGHT_BLUE if is_mouse_over(mx, my, 50, 550, 200, 40) else BLUE
-
-
-        draw_text('Number of Cameras:', font, BLACK, screen, 50, 100)
-        draw_input_box(screen, 300, 100, 100, 40, nbCameras, nbCameras_color)
-
-        draw_text('Exercise Type (1 for Curl, 2 for Squat):', font, BLACK, screen, 50, 200)
-        draw_input_box(screen, 500, 200, 100, 40, str(exoType) if exoType is not None else '', exoType_color)
-
-        draw_text('Number of Reps:', font, BLACK, screen, 50, 300)
-        draw_input_box(screen, 300, 300, 100, 40, repetitions, repetitions_color)
-
-        draw_text('Number of Sets:', font, BLACK, screen, 50, 400)
-        draw_input_box(screen, 300, 400, 100, 40, sets, sets_color)
-
-        if nbCameras == '2':
-            draw_text('Do you want to calibrate the cameras? (1 for yes, 2 for no):', font, BLACK, screen, 50, 500)
-            draw_input_box(screen, 750, 500, 100, 40, calibrate_cameras, calibrate_cameras_color)
-
-        pygame.draw.rect(screen, start_button_color, (50, 550, 200, 40))
-        draw_text('Start', font, WHITE, screen, 100, 560)
-
+        time_delta = clock.tick(60) / 1000.0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = event.pos
-                if 300 <= mx <= 400 and 100 <= my <= 140:
-                    input_active = 'nbCameras'
-                elif 500 <= mx <= 600 and 200 <= my <= 240:
-                    input_active = 'exoType'
-                elif 300 <= mx <= 400 and 300 <= my <= 340:
-                    input_active = 'repetitions'
-                elif 300 <= mx <= 400 and 400 <= my <= 440:
-                    input_active = 'sets'
-                elif 750 <= mx <= 850 and 500 <= my <= 540:
-                    input_active = 'calibrate_cameras'
-                elif 50 <= mx <= 250 and 550 <= my <= 590:  # Start button
-                    if nbCameras == '' or exoType is None or repetitions == '' or sets == '':
-                        print("Please fill in all fields.")
-                    else:
-                        if nbCameras == '1':
-                            if exoType == 1:
-                                curlDetection1cam.main(int(repetitions), int(sets))
-                            elif exoType == 2:
-                                squatDetection1cam.main(int(repetitions), int(sets))
-                        elif nbCameras == '2':
-                            if calibrate_cameras == '1':
-                                calib.main()
-                            videoDetection.main(cam1, cam2, exoType, int(sets), int(repetitions))
-                            input_active = None  # Clear input focus
-            elif event.type == pygame.KEYDOWN:
-                if input_active:
-                    if event.key == pygame.K_RETURN:
-                        pass  # Ignore return key press
-                    elif event.key == pygame.K_BACKSPACE:
-                        if input_active == 'nbCameras':
-                            nbCameras = nbCameras[:-1]
-                        elif input_active == 'exoType':
-                            exoType = None
-                        elif input_active == 'repetitions':
-                            repetitions = repetitions[:-1]
-                        elif input_active == 'sets':
-                            sets = sets[:-1]
-                        elif input_active == 'calibrate_cameras':
-                            calibrate_cameras = calibrate_cameras[:-1]
-                    else:
-                        if input_active == 'nbCameras':
-                            nbCameras += event.unicode
-                        elif input_active == 'exoType':
-                            if event.unicode.isdigit():
-                                exoType = int(event.unicode)
-                        elif input_active == 'repetitions':
-                            repetitions += event.unicode
-                        elif input_active == 'sets':
-                            sets += event.unicode
-                        elif input_active == 'calibrate_cameras':
-                            if event.unicode.isdigit():
-                                calibrate_cameras += event.unicode
+
+            if event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == start_button:
+                        nbCameras = nbCameras_input.get_text()
+                        exoType = exoType_dropdown.selected_option
+                        repetitions = repetitions_input.get_text()
+                        sets = sets_input.get_text()
+
+                        if not nbCameras or exoType == 'Select' or not repetitions or not sets:
+                            print("Please fill in all fields.")
+                        else:
+                            exoType_val = 1 if exoType == 'Curl' else 2
+                            if nbCameras == '1':
+                                if exoType_val == 1:
+                                    curlDetection1cam.main(int(repetitions), int(sets))
+                                elif exoType_val == 2:
+                                    squatDetection1cam.main(int(repetitions), int(sets))
+                            elif nbCameras == '2':
+                                if calibrate_cameras:
+                                    calib.main()
+                                videoDetection.main(1, 2, exoType_val, int(sets), int(repetitions))
+
+                    elif event.ui_element == calibrate_yes_button:
+                        calibrate_cameras = True
+                    elif event.ui_element == calibrate_no_button:
+                        calibrate_cameras = False
+                        
+            manager.process_events(event)
+        nbCameras = nbCameras_input.get_text()
+        if nbCameras.isdigit() and int(nbCameras) > 1:
+            calibrate_yes_button.show()
+            calibrate_no_button.show()
+        else:
+            calibrate_yes_button.hide()
+            calibrate_no_button.hide()
+
+        manager.update(time_delta)
+        screen.fill(LIGHT_GRAY)
+
+        draw_text('Select Options', font, LIGHT_GREEN, screen, 350, 20)
+        draw_text('Number of Cameras:', font, LIGHT_GREEN, screen, 50, 100)
+        draw_text('Exercise Type:', font, LIGHT_GREEN, screen, 50, 200)
+        draw_text('Number of Reps:', font, LIGHT_GREEN, screen, 50, 300)
+        draw_text('Number of Sets:', font, LIGHT_GREEN, screen, 50, 400)
+
+        nbCameras = nbCameras_input.get_text()
+        if nbCameras.isdigit() and int(nbCameras) > 1:
+            draw_text('Calibrate Camera', font, LIGHT_GREEN, screen, 50, 500)
+
+
+        manager.draw_ui(screen)
+
         pygame.display.flip()
 
 if __name__ == "__main__":

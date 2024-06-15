@@ -14,7 +14,7 @@ def calculate_angle(a, b, c):
         angle = 360 - angle
     return angle
 
-def main(repetions, sets) :
+def main(repetions, sets):
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
     mp_drawing_styles = mp.solutions.drawing_styles
@@ -71,37 +71,39 @@ def main(repetions, sets) :
                     leftstage = 'Down'
                 elif leftangle < 45 and leftstage == 'Down':
                     leftcounter += 1
-                    leftstage = ' Up'
+                    leftstage = 'Up'
 
                 if rightangle > 160:
                     rightstage = 'Down'
                 elif rightangle < 45 and rightstage == 'Down':
                     rightcounter += 1
-                    rightstage = ' Up'
+                    rightstage = 'Up'
 
                 if 170 < backangle < 190:
-                    #The back is straight
+                    # The back is straight
                     pass
                 else:
-                    play_sound("straighten your back")
+                    # play_sound("straighten your back")
+                    pass
 
-                cv2.rectangle(image, (0, 0), (225, 73), (225, 95, 50), -1)
-                cv2.rectangle(image, (415, 0), (640, 73), (225, 95, 50), -1)
+                # Smaller and colored rectangles
+                cv2.rectangle(image, (0, 0), (215, 63), (102, 206, 183), -1)
+                cv2.rectangle(image, (0, 0), (635, 63), (102, 206, 183), -1)
 
-                cv2.putText(image, 'Left Hand', (65, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-                cv2.putText(image, 'Curls', (15, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-                cv2.putText(image, 'Stage', (160, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, 'Left Hand', (65, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, 'Curls', (15, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, 'Stage', (160, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
-                cv2.putText(image, str(leftcounter), (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (255, 255, 255), 2, cv2.LINE_AA)
-                cv2.putText(image, leftstage, (140, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, str(leftcounter), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, leftstage, (140, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
-                cv2.putText(image, 'Right Hand', (480, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-                cv2.putText(image, 'Curls', (425, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-                cv2.putText(image, 'Stage', (570, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, 'Right Hand', (480, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, 'Curls', (425, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, 'Stage', (570, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
-                cv2.putText(image, str(rightcounter), (430, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (255, 255, 255), 2, cv2.LINE_AA)
-                cv2.putText(image, rightstage, (550, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-                
+                cv2.putText(image, str(rightcounter), (430, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, rightstage, (550, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
                 mp_drawing.draw_landmarks(image, results_pose.pose_landmarks, mp_pose.POSE_CONNECTIONS, 
                     landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
             except:
@@ -122,7 +124,7 @@ def main(repetions, sets) :
             cv2.imshow("Raw webcam feed", image)
 
             k = cv2.waitKey(1)
-            if k & 0xFF == 27: break #27 is ESC key.
+            if k & 0xFF == 27: break  # 27 is ESC key.
 
             end_time = time.time()
             elapsed_time = end_time - start_time
