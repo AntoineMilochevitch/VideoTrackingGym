@@ -29,6 +29,16 @@ def main(repetions, sets):
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
+    begin = True
+    if begin:
+        play_sound("three")
+        cv2.waitKey(1000)
+        play_sound("two")
+        cv2.waitKey(1000)
+        play_sound("one")
+        cv2.waitKey(1000)
+        play_sound("start")
+        begin = False
     pTime = 0
     cTime = 0
 
@@ -86,23 +96,26 @@ def main(repetions, sets):
                     # play_sound("straighten your back")
                     pass
 
-                # Smaller and colored rectangles
-                cv2.rectangle(image, (0, 0), (215, 63), (102, 206, 183), -1)
-                cv2.rectangle(image, (0, 0), (635, 63), (102, 206, 183), -1)
+                # Draw rectangles on both sides of the image
+                cv2.rectangle(image, (0, 0), (215, 80), (102, 206, 183), -1)
+                cv2.rectangle(image, (image.shape[1] - 215, 0), (image.shape[1], 80), (102, 206, 183), -1)
 
+                # Put text for the left hand side
                 cv2.putText(image, 'Left Hand', (65, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
                 cv2.putText(image, 'Curls', (15, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
                 cv2.putText(image, 'Stage', (160, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
-                cv2.putText(image, str(leftcounter), (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (255, 255, 255), 2, cv2.LINE_AA)
-                cv2.putText(image, leftstage, (140, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                # Put text for the right hand side
+                cv2.putText(image, 'Right Hand', (image.shape[1] - 150, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, 'Curls', (image.shape[1] - 200, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, 'Stage', (image.shape[1] - 65, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
-                cv2.putText(image, 'Right Hand', (480, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-                cv2.putText(image, 'Curls', (425, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-                cv2.putText(image, 'Stage', (570, 34), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                # Put counters and stages for both sides
+                cv2.putText(image, str(leftcounter), (20, 67), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, leftstage, (130, 67), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
-                cv2.putText(image, str(rightcounter), (430, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (255, 255, 255), 2, cv2.LINE_AA)
-                cv2.putText(image, rightstage, (550, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, str(rightcounter), (image.shape[1] - 205, 67), cv2.FONT_HERSHEY_SIMPLEX, 1.25, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, rightstage, (image.shape[1] - 85, 67), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
                 mp_drawing.draw_landmarks(image, results_pose.pose_landmarks, mp_pose.POSE_CONNECTIONS, 
                     landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())

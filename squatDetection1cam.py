@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+from playSound import play_sound
 
 # Calculate angle between three points
 def calculate_angle(a, b, c):
@@ -23,6 +24,17 @@ def main(repetitions, sets):
     mp_drawing_styles = mp.solutions.drawing_styles
 
     cap = cv2.VideoCapture(0)
+
+    begin = True
+    if begin:
+        play_sound("three")
+        cv2.waitKey(1000)
+        play_sound("two")
+        cv2.waitKey(1000)
+        play_sound("one")
+        cv2.waitKey(1000)
+        play_sound("start")
+        begin = False
 
     # Squat counter variables
     counter = 0 

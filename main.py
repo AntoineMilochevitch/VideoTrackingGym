@@ -6,6 +6,8 @@ import calib
 import squatDetection1cam
 import curlDetection1cam
 import json
+import cv2
+import numpy as np
 
 pygame.init()
 
@@ -44,6 +46,7 @@ calibrate_no_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((45
 calibrate_yes_button.hide()
 calibrate_no_button.hide()
 start_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 550), (150, 40)), text='Start', manager=manager)
+demo_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((500, 550), (150, 40)), text='Demo', manager=manager)
 
 # Labels
 font = pygame.font.Font(font_path, font_size)
@@ -52,6 +55,33 @@ def draw_text(text, font, color, surface, x, y):
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
+
+def play_video(video_path):
+    cap = cv2.VideoCapture(video_path)
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = np.rot90(frame)
+        frame = pygame.surfarray.make_surface(frame)
+        frame = pygame.transform.flip(frame, True, False)
+        frame = pygame.transform.scale(frame, (width, height))
+
+        screen.blit(frame, (0, 0))
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                cap.release()
+                pygame.quit()
+                sys.exit()
+
+        pygame.time.wait(10)
+
+    cap.release()
+
 
 def main():
     global screen
@@ -78,7 +108,7 @@ def main():
                         if not nbCameras or exoType == 'Select' or not repetitions or not sets:
                             print("Please fill in all fields.")
                         else:
-                            exoType_val = 1 if exoType == 'Curl' else 2
+                            exoType_val = 1 if 'Curl' in exoType else 2
                             if nbCameras == '1':
                                 if exoType_val == 1:
                                     curlDetection1cam.main(int(repetitions), int(sets))
@@ -93,6 +123,14 @@ def main():
                         calibrate_cameras = True
                     elif event.ui_element == calibrate_no_button:
                         calibrate_cameras = False
+                    elif event.ui_element == demo_button:
+                        print("Demo")
+                        exoType = exoType_dropdown.selected_option
+                        exoType_val = 1 if 'Curl' in exoType else 2
+                        if exoType_val == 1:
+                            play_video('CurlTemplate.mp4')
+                        elif exoType_val == 2:
+                            pass
                         
             manager.process_events(event)
         nbCameras = nbCameras_input.get_text()

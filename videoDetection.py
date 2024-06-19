@@ -25,6 +25,17 @@ def run_mp(input_stream1, input_stream2, P0, P1, nbRep, nbSet, exoType):
         cap.set(3, frame_shape[1])
         cap.set(4, frame_shape[0])
 
+    begin = True
+    if begin:
+        play_sound("three")
+        cv.waitKey(1000)
+        play_sound("two")
+        cv.waitKey(1000)
+        play_sound("one")
+        cv.waitKey(1000)
+        play_sound("start")
+        begin = False
+
     #create body keypoints detector objects.
     pose0 = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
     pose1 = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
